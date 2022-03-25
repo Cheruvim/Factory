@@ -29,13 +29,7 @@ public class Example : MonoBehaviour
 		// Show the button again
 		wasLocked = 0;
 	}
-
-	void OnMouseDown()
-	{
-		// Lock the cursor
-		//Screen.lockCursor = true;
-	}
-
+	
 	void Update()
 	{
 		
