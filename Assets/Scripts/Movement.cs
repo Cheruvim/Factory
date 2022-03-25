@@ -8,6 +8,7 @@ public class Movement : MonoBehaviour
     private Vector2 PlayerMouseInput;
     private float xRot;
     public bool Animove;
+    public bool Grab=true;
     [SerializeField] private bool CanGrab = false;
     [SerializeField] private LineRenderer lr;
     [SerializeField] private GameObject Target;
@@ -99,8 +100,9 @@ public class Movement : MonoBehaviour
                     CanGrab = true;
 
 
-                    if (Input.GetMouseButton(0))
+                    if (Input.GetMouseButton(0)&&!Grab)
                     {
+                        Grab=true;
                         hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
                         hit.collider.gameObject.GetComponent<BoxCollider>().isTrigger = true;
                         hit.collider.transform.parent = PlayerCamera;
@@ -109,6 +111,7 @@ public class Movement : MonoBehaviour
                     else
                     
                     {
+                        Grab = false;
                         Target.gameObject.GetComponent<Rigidbody>().isKinematic = false;
                         Target.gameObject.GetComponent<BoxCollider>().isTrigger = false;
                         Target.transform.parent = null;
