@@ -26,7 +26,7 @@ public class Movement : MonoBehaviour
     {
         lr = PlayerCamera.gameObject.GetComponent<LineRenderer>();
         Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.None;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void FixedUpdate()
@@ -107,12 +107,13 @@ public class Movement : MonoBehaviour
 
                     }
                     else
+                    
                     {
-                        hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = false;
-                        hit.collider.gameObject.GetComponent<BoxCollider>().isTrigger = false;
-                        hit.collider.transform.parent = null;
-
+                        Target.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+                        Target.gameObject.GetComponent<BoxCollider>().isTrigger = false;
+                        Target.transform.parent = null;
                     }
+
 
                 }
                 else
@@ -141,7 +142,7 @@ public class Movement : MonoBehaviour
                     else if (Input.GetKeyDown(KeyCode.Escape) && Animove)
                     {
                         Cursor.visible = false;
-                        Cursor.lockState = CursorLockMode.Confined;
+                        Cursor.lockState = CursorLockMode.Locked;
                         Animove = false;
                         
                         PlayerCamera.transform.position = PlayerBody.transform.position;
@@ -160,6 +161,11 @@ public class Movement : MonoBehaviour
                     if (Target)
                     {
                         Target.gameObject.GetComponent<Outline>().enabled = false;
+                        Target.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+                        Target.gameObject.GetComponent<BoxCollider>().isTrigger = false;
+                        Target.transform.parent = null;
+
+                       
                     }
                     lr.SetPosition(1, hit.point);
 
