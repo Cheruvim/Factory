@@ -163,24 +163,15 @@ public class Movement : MonoBehaviour
                         Target.gameObject.GetComponent<Outline>().enabled = false;
                         Target.gameObject.GetComponent<Rigidbody>().isKinematic = false;
                         Target.gameObject.GetComponent<BoxCollider>().isTrigger = false;
-                        Target.transform.parent = null;
-
-                       
+                        Target.transform.parent = null; 
                     }
+
                     lr.SetPosition(1, hit.point);
-
-                   
                 }
-
-
             }
             
         }
         else lr.SetPosition(1, transform.forward * 5000);
-
-    }
-    private void CamAnim()
-    {
 
     }
 }
