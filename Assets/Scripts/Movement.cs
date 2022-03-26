@@ -9,10 +9,14 @@ public class Movement : MonoBehaviour
     private float xRot;
     public bool Animove;
     public bool Grab=true;
+    public Camera camera;
+    public GameObject Conveer;
+    public GameObject Spawn;
     [SerializeField] private bool CanGrab = false;
     [SerializeField] private LineRenderer lr;
     [SerializeField] private GameObject Target;
     [SerializeField] private GameObject PanelTarget;
+    [SerializeField] private GameObject TargetButton;
     [SerializeField] private Transform CamPos;
     [SerializeField] private GameObject Looker;
     [SerializeField] private Transform PlayerCamera;
@@ -29,9 +33,20 @@ public class Movement : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
-
     private void FixedUpdate()
     {
+        MovePlayer();
+        
+    }
+        private void Update()
+    {
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            PlayerBody.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+        }
+
+
         if (PanelTarget == true)
         {
             
@@ -39,7 +54,36 @@ public class Movement : MonoBehaviour
             {
                 PlayerCamera.transform.position = CamPos.transform.position;
                 PlayerCamera.transform.rotation = CamPos.transform.rotation;
-                    
+               
+                    Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+                if(Physics.Raycast(ray, out RaycastHit hitInfo))
+                {
+                   
+                    if (hitInfo.collider.gameObject.tag == "Button"&& Input.GetMouseButtonDown(0))
+                    {
+                        Conveer.gameObject.GetComponent<Conveer>().speed = 2;
+                        Spawn.gameObject.GetComponent<BlockSpawner>().enabled = true;
+                    }
+                    if (hitInfo.collider.gameObject.tag == "ButtonOff" && Input.GetMouseButtonDown(0))
+                    {
+                        Conveer.gameObject.GetComponent<Conveer>().speed = 0;
+                        Spawn.gameObject.GetComponent<BlockSpawner>().enabled = false;
+                    }
+                    if (hitInfo.collider.gameObject.tag=="Button"|| hitInfo.collider.gameObject.tag == "ButtonOff")
+                       {
+                            TargetButton = hitInfo.collider.gameObject;
+                            hitInfo.collider.gameObject.GetComponent<Outline>().enabled = true;
+                       }
+                    else
+                    {
+                        if (TargetButton)
+                        {
+                            TargetButton.gameObject.GetComponent<Outline>().enabled = false;
+                        }
+                    }
+                }
+                
+                
                 
             }
 
@@ -50,7 +94,6 @@ public class Movement : MonoBehaviour
         PlayerMovementInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
         PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
-        MovePlayer();
         MovePlayerCamera();
         HitscanCheck();
     }
@@ -62,10 +105,7 @@ public class Movement : MonoBehaviour
             Vector3 MoveVector = transform.TransformDirection(PlayerMovementInput) * Speed;
             PlayerBody.velocity = new Vector3(MoveVector.x, PlayerBody.velocity.y, MoveVector.z);
 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                PlayerBody.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
-            }
+            
         }
     }
 
@@ -100,7 +140,7 @@ public class Movement : MonoBehaviour
                     CanGrab = true;
 
 
-                    if (Input.GetMouseButton(0)&&!Grab)
+                    if (Input.GetMouseButton(0))
                     {
                         Grab=true;
                         hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
@@ -111,7 +151,7 @@ public class Movement : MonoBehaviour
                     else
                     
                     {
-                        Grab = false;
+                        
                         Target.gameObject.GetComponent<Rigidbody>().isKinematic = false;
                         Target.gameObject.GetComponent<BoxCollider>().isTrigger = false;
                         Target.transform.parent = null;
@@ -147,8 +187,12 @@ public class Movement : MonoBehaviour
                         Cursor.visible = false;
                         Cursor.lockState = CursorLockMode.Locked;
                         Animove = false;
-                        
-                        PlayerCamera.transform.position = PlayerBody.transform.position;
+
+                        if (TargetButton)
+                        {
+                            TargetButton.gameObject.GetComponent<Outline>().enabled = false;
+                        }
+                        PlayerCamera.transform.position = PlayerBody.transform.position + new Vector3(0, 0.5f, 0);
                         PlayerCamera.transform.rotation = PlayerBody.transform.rotation;
                     }
 
@@ -163,6 +207,7 @@ public class Movement : MonoBehaviour
                     }
                     if (Target)
                     {
+                       // Grab = false;
                         Target.gameObject.GetComponent<Outline>().enabled = false;
                         Target.gameObject.GetComponent<Rigidbody>().isKinematic = false;
                         Target.gameObject.GetComponent<BoxCollider>().isTrigger = false;
